@@ -1,0 +1,15 @@
+ba7dbac11d5e05d41cdeb8e91acbd108 *DESCRIPTION
+b3386520a554600e1f9c7773374997d3 *NAMESPACE
+886e98bfc54c9ef7a510134e17195d46 *R/fheatmap.R
+980f2894dcafbc92db9da7368a14986c *data/annotation_col.rda
+174e63258312340923aaf662741b9208 *data/annotation_col_color.rda
+eba2492978eb7d1d6314a957c386c87f *data/annotation_row.rda
+6726f7559cbd3027606e68909541e80c *data/annotation_row_color.rda
+363b4eeeea20771188f9f92db4eb1a67 *data/fheatmap_data.rda
+8d272fde34d1c047089dd830382cf987 *man/annotation_col.Rd
+efe885ece6a2004d4e78c7a825edc381 *man/annotation_col_color.Rd
+fc66f6a4239dac7c9218e5953bc0fb5b *man/annotation_row.Rd
+9478788e2100c302630560e7a2fab4b6 *man/annotation_row_color.Rd
+cca7ac08291e0370c6224bb0b9894e9c *man/fheatmap-package.Rd
+27b0915a284384e184329ab129ad1322 *man/fheatmap_data.Rd
+92a91432214597688601f917088f21ab *man/figures/Complete_heatmap.png
