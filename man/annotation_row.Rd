@@ -14,7 +14,6 @@
 \details{ A dataframe with two features (Diesease and Pathways) of gene. }
 \examples{
 data(annotation_row)
-fheatmap(fheatmap_data,annotation_row=annotation_row,display_tree_col = FALSE,
-          cluster_rows = TRUE,display_tree_row = TRUE)
+fheatmap(fheatmap_data,annotation_row=annotation_row)
 }
 \keyword{annotation_row}

@@ -1,7 +1,7 @@
-\name{ Heatmap Data }
+\name{ Heatmap Data } 
 \alias{ fheatmap_data }
 \docType{ data }
-\title{ Data object for 'fheatmap'}
+\title{ An example data object for plotting a heatmap. }
 \description{ An example data object for plotting a heatmap. }
 \usage{ data("fheatmap_data") }
 \format{

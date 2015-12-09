@@ -1,10 +1,11 @@
+
 # Graphics Settings
 ## Theme Blank
 theme_blank <- function(){theme_blank<-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
                                              panel.background = element_blank(), axis.line = element_blank(), axis.ticks = element_blank(), 
                                              axis.text= element_blank(),panel.grid=element_blank(),panel.border=element_blank(),
                                              plot.margin=rep(unit(0,"null"),4),panel.margin = unit(0,"null"),plot.margin=rep(unit(0,"null"),4),
-                                             axis.ticks.length = unit(0,"null"),axis.ticks.margin = unit(0,"null"),legend.position = "none")
+                                             legend.position = "none")
                           return(theme_blank)}
 
 ##Get default colors or get "n" distinct ggplot colors
@@ -15,7 +16,7 @@ ggplotColours <- function(n=6, h=c(0, 360) +15){
 
 ##Scale / Z transform
 Zscore <- function(x){
-  transformedx <- x-median(x)/(sd(x))
+  transformedx <- (x-median(x))/(sd(x))
   return(transformedx)
 }
 
@@ -110,7 +111,7 @@ cluster_data = function(data, distance, method){
 #Draw title
 draw_title <- function(title=title,font_size=10,colour="black",family="",fontface="plain",dim =NULL){
   pushViewport(vplayout(dim$title[1]:dim$title[2],dim$title[3]:dim$title[4]))
-  draw_title<-ggplot()+annotate(geom="text", x=2, y=1, label=title,size=font_size,colour=colour,hjust=0.5,family=family,fontface=fontface)+theme_blank()+ xlab(NULL) + ylab(NULL)
+  draw_title<-ggplot()+annotate(geom="text", x=2, y=1, label=title,size=font_size,colour=colour,family=family,fontface=fontface)+theme_blank()+ xlab(NULL) + ylab(NULL)
   print(draw_title,newpage=FALSE)
   upViewport()
 }
@@ -194,7 +195,8 @@ draw_tree = function(hc=NULL,dim=NULL,rows=T,cut=0){
     #geom_point() +
     scale_y_continuous(limits=ylimits,expand=c(0,0) ) + 
     scale_x_continuous(limits=xlimits,expand=c(0,0) ) +
-    theme_blank() + xlab(NULL) + ylab(NULL)
+    theme_blank() + xlab(NULL) + ylab(NULL) +
+    theme(plot.margin=unit(c(0.05,0.05,0.05,0.05),"cm"))
   
   get_color_recursive <- function(x,color_vec=NULL){ 
     lines_color_dm <-na.omit( matrix(ncol=2,nrow=1) )
@@ -319,7 +321,7 @@ grid_dim_function <- function(display_tree_row=F,display_rownames=F,annotation_r
   if (is.null(annotation_col) & is.null(annotation_row)){
     iw_mlegend = iw_mlegend+1 ;jw_mlegend = jw_mlegend+1
     iw_rname=iw_rname+1;jw_rname=jw_rname+1
-    jw_mat=jw_mat+1
+    jw_mat=jw_mat+1 ; jw_cname=jw_mat ; jw_ctree = jw_mat
   }
   
   #dim_list
@@ -373,7 +375,7 @@ make_viewports_grid <- function(annotation_row=NULL,annot_row_color=NULL,annotat
 }
 ## Generate Annotation object
 generate_annot_plot <- function(annot_object=NULL,annot_color=NULL,npalette_col=5,annot_palette=NULL,names_order=NULL,row=F,seed=13,...){
-
+  
   set.seed(13)
   annot_object<- as.data.frame(annot_object[rev(names_order),])
   fill_legend_list <- list()
@@ -384,15 +386,15 @@ generate_annot_plot <- function(annot_object=NULL,annot_color=NULL,npalette_col=
     if (row){ 
       pushViewport(vplayout(1,j)) 
       #df_row_annot <- data.frame(
-        x_row_annot<-rep(1,nrow(annot_object))
-        y_row_annot<-seq(1,nrow(annot_object),1)
+      x_row_annot<-rep(1,nrow(annot_object))
+      y_row_annot<-seq(1,nrow(annot_object),1)
       #)
     }
     else {
       pushViewport(vplayout(j,1)) 
       #df_row_annot <- data.frame(
-        y_row_annot<-rep(1,nrow(annot_object))
-        x_row_annot<-seq(1,nrow(annot_object),1)
+      y_row_annot<-rep(1,nrow(annot_object))
+      x_row_annot<-seq(1,nrow(annot_object),1)
       #)
     }
     
@@ -419,8 +421,8 @@ generate_annot_plot <- function(annot_object=NULL,annot_color=NULL,npalette_col=
       
       #Make list for Legend
       mat_color <- colorRampPalette(brewer.pal(9,"Blues")[3:9])(100)
-      pretty_range<-grid.pretty(range(as.matrix(annot_object[,j],ncol=1), na.rm = TRUE))
-      labels <-rep("",length(mat_color)) 
+      pretty_range <- grid.pretty(range(as.matrix(annot_object[,j],ncol=1), na.rm = TRUE))
+      labels <-rep("",length(mat_color))
       
       y<- (round((length(labels)-1)/length(pretty_range)))
       labels[seq(y,length(labels)-y,length.out= length(pretty_range)-1)] <- pretty_range[-length(pretty_range)]
@@ -431,7 +433,9 @@ generate_annot_plot <- function(annot_object=NULL,annot_color=NULL,npalette_col=
     
     df_row_annot <- data.frame(x_row_annot,y_row_annot)
     print(ggplot(df_row_annot, mapping=aes(xmin=x_row_annot, xmax=x_row_annot+1, ymin=y_row_annot,ymax=y_row_annot+1 ) )+ geom_rect(fill=fill) + theme_blank() +
-            xlab(NULL) + ylab(NULL) +scale_x_discrete(expand=c(0,0)) + scale_y_discrete(expand=c(0,0)),newpage = FALSE )
+            xlab(NULL) + ylab(NULL) +scale_x_discrete(expand=c(0,0)) + 
+            scale_y_discrete(expand=c(0,0)) +
+            theme(plot.margin=unit(c(0.05,0.05,0.05,0.05),"cm")),newpage = FALSE)
     upViewport()
   }
   
@@ -481,7 +485,7 @@ generate_legend_plot <- function(dim=NULL,fill_legend=NULL,legend_fontsize=4,fam
     
     df <- data.frame(xmin,xmax,ymin,ymax,text_x,text_y)
     p<-ggplot(df,mapping=aes(xmin = xmin, xmax  = xmax, ymin = ymin , ymax = ymax ))+
-      geom_rect(fill=unname(fill_legend[[i]]),hjust=0) +
+      geom_rect(fill=unname(fill_legend[[i]])) +
       geom_text(x=text_x, y=text_y, label= labels,size=legend_fontsize,family = family,fontface=legend_fontface,colour=legend_color,hjust=0,vjust=0.5)+
       theme_blank() + scalex + scaley 
     print(p,newpage=F)
@@ -491,17 +495,19 @@ generate_legend_plot <- function(dim=NULL,fill_legend=NULL,legend_fontsize=4,fam
 }  
 
 ## Generate Colnames and Rownames
-draw_names <- function(col_names=NULL,row_names=NULL,total_names=0,font_size=5,family="",names_fontface="",names_color="black",dim=NULL){
+draw_names <- function(col_names=NULL,row_names=NULL,total_names=0,font_size=0.5,family="",names_fontface="",names_color="black",dim=NULL){
   
   if(!(is.null(col_names))){
+    
     pushViewport(vplayout(dim$col_name[1]:dim$col_name[2],dim$col_name[3]:dim$col_name[4]))
     x_coltext <- seq(1.5,total_names+1,1)
     y_coltext <- rep(max(nchar(col_names))-0.5,total_names)
     df_test <- data.frame(x_coltext,y_coltext,col_names)
+    ## Edited the missing column name
     names_plot <- ggplot(df_test)  +
-      scale_x_continuous(limits=c(1, total_names+1),expand=c(0,0) ) + scale_y_continuous( limits=c(1, max(nchar(col_names))) ,expand=c(0,0)) +
+      scale_x_continuous(limits=c(1, total_names + 1),expand=c(0,0) ) + scale_y_continuous( limits=c(1, max(nchar(col_names))) ,expand=c(0,0)) +
       geom_text(x= x_coltext ,y=y_coltext,label=col_names,angle = 90,size=font_size,family=family,fontface= names_fontface, colour= names_color,hjust=1) +
-      theme_blank()  +
+      theme_blank()  + theme(plot.margin=unit(c(0.05,0.05,0.05,0.05),"cm")) +
       xlab(NULL) + ylab(NULL)
     print(names_plot,newpage=FALSE)
     upViewport()
@@ -515,16 +521,17 @@ draw_names <- function(col_names=NULL,row_names=NULL,total_names=0,font_size=5,f
     names_plot <- ggplot(df_test)  +
       scale_y_continuous(limits=c(1, total_names+1),expand=c(0,0) ) + scale_x_continuous( limits=c(1, max(nchar(row_names))) ,expand=c(0,0)) +
       geom_text(x= x_coltext ,y=y_coltext,label=row_names,size=font_size,family=family, fontface= names_fontface, colour= names_color,hjust=0) +
-      theme_blank()  +
+      theme_blank()  + theme(plot.margin=unit(c(0.05,0.05,0.05,0.05),"cm")) +
       xlab(NULL) + ylab(NULL)
     print(names_plot,newpage=FALSE)
     upViewport()
   }
 }
 
-#Draw heatmap matrix
-draw_mat <- function(data,dim=NULL,breaks=NULL,mat_color=NULL,display_number=F){
+#Draw heatmap matrix 
+draw_mat <- function(data,dim=NULL,breaks=NULL,mat_color=NULL,cell_border=NULL,cell_border_col=NULL,display_number=F){
   
+  #Make space around the matrix
   xmin <- rep(1:ncol(data),nrow(data))
   xmax <- xmin+1
   ymin <- rep(((nrow(data):1)),each=ncol(data))
@@ -540,11 +547,16 @@ draw_mat <- function(data,dim=NULL,breaks=NULL,mat_color=NULL,display_number=F){
   else { breaks = breaks }
   
   mat_select_color = mat_vec_colours(as.numeric(as.matrix(data)), color = mat_color, breaks = breaks)
-  p <-ggplot(df, mapping=aes(xmin=xmin, xmax=xmax, ymin=ymin,ymax=ymax )) + geom_rect(fill=mat_select_color[as.character(t(data))]) 
+  ##Edited : Added line to each rectangle
+  p <-ggplot(df, mapping=aes(xmin=xmin, xmax=xmax, ymin=ymin,ymax=ymax ))
+  
+  if(cell_border== T){ p <- p+geom_rect(color=cell_border_col,fill=mat_select_color[as.character(t(data))]) } 
+  else { p <- p+geom_rect(fill=mat_select_color[as.character(t(data))]) }
   
   if(display_number == T){  p <- p+geom_text(x=x_axis_breaks, y=y_axis_breaks, label=as.character(text),size=3) }
   
-  p <- p+theme_blank()  + xlab(NULL) + ylab(NULL) + scale_x_discrete(expand=c(0,0)) + scale_y_discrete(expand=c(0,0))    
+  p <- p+theme_blank()  + xlab(NULL) + ylab(NULL) + scale_x_discrete(expand=c(0,0)) + scale_y_discrete(expand=c(0,0)) +
+        theme(plot.margin=unit(c(0.05,0.05,0.05,0.05),"cm"))
   
   pushViewport(vplayout(dim$matrix[1]:dim$matrix[2],dim$matrix[3]:dim$matrix[4]))
   print(p,newpage=FALSE)
@@ -554,20 +566,23 @@ draw_mat <- function(data,dim=NULL,breaks=NULL,mat_color=NULL,display_number=F){
 }
 
 #Draw heatmap legend
-draw_mat_legend <- function(data,mat_color,mat_legend_size=2,dim=NULL){
+draw_mat_legend <- function(data,breaks=NULL,mat_color,mat_legend_size=5,dim=NULL){
   
   pretty_range<-grid.pretty(range(as.matrix(data), na.rm = TRUE))
   pretty_range[1] <- min(as.matrix(data))
+  xmin <- rep(0.1,length(mat_color))
+  ##pretty_range[1] <- min(as.matrix(data))
   xmin <- rep(0.5,length(mat_color))
   xmax <- xmin+0.5
   ymin = seq(5,10,length.out =length(mat_color) )
   ymax = ymin + (ymin[2]-ymin[1])
   df_mat_legend <- data.frame(xmin,xmax,ymin,ymax)
-  x_axis_breaks <- rep(0.8,length(pretty_range))
-  y_axis_breaks <- seq(5,max(ymax),length.out =length(pretty_range))
+  x_axis_breaks <- rep(1.3,length(pretty_range))
+  y_axis_breaks <- seq(5.5,max(ymax)-0.5,length.out =length(pretty_range))
   
   p<-ggplot(df_mat_legend, mapping=aes(xmin=xmin, xmax=xmax, ymin=ymin,ymax=ymax ))+
-    geom_rect(fill=mat_color)+annotate(geom="text",x=x_axis_breaks,y=y_axis_breaks,label=pretty_range,size=mat_legend_size,hjust=-0.6,vjust=0)+ xlab(NULL) + ylab(NULL)+
+    geom_rect(fill=mat_color)+annotate(geom="text",x=x_axis_breaks,y=y_axis_breaks,label=pretty_range,size=mat_legend_size)+ 
+    xlab(NULL) + ylab(NULL)+
     scale_x_continuous(limits=c(0, 2),expand=c(0,0)) +scale_y_continuous(limits=c(0, max(ymax)+0.6),expand=c(0,0))+
     theme_blank()
   
@@ -681,12 +696,12 @@ draw_mat_legend <- function(data,mat_color,mat_legend_size=2,dim=NULL){
 
 #Main Function
 fheatmap <- function(data,header=T,scale=F,title=NA,title_fontsize=6,title_color="black",title_font_style="",title_fontface="plain",
-                  rowname=T,breaks=NULL,mat_color=NULL,cluster_rows=F,cluster_cols=T,cut_rowtree=0,cut_coltree=0,
-                  display_tree_col=T,display_tree_row=F, cluster_distance_rows="euclidean",cluster_distance_cols="euclidean",
-                  clustering_method="ward.D",annotation_palette=NULL,npalette_col=5,annotation_row=NULL,annotation_col=NULL,annot_row_color=NULL,
-                  annot_col_color=NULL,display_colnames=T,display_rownames=T,fontsize=4,row_fontsize=fontsize,col_fontsize=fontsize,
-                  names_font_style="",names_fontface="plain",names_color="black",legend_fontsize=fontsize,legend_font_style="",legend_fontface="plain",
-                  legend_color="black",mat_legend_size=fontsize,display_number=F,seed=13, ...){
+                     rowname=T,breaks=NULL,mat_color=NULL,cell_border=T,cell_border_col="slategrey",cluster_rows=F,cluster_cols=T,cut_rowtree=0,cut_coltree=0,
+                     display_tree_col=T,display_tree_row=F, cluster_distance_rows="euclidean",cluster_distance_cols="euclidean",
+                     clustering_method="ward.D",annotation_palette=NULL,npalette_col=5,annotation_row=NULL,annotation_col=NULL,annot_row_color=NULL,
+                     annot_col_color=NULL,display_colnames=T,display_rownames=T,fontsize=4,row_fontsize=fontsize,col_fontsize=fontsize,
+                     names_font_style="",names_fontface="plain",names_color="black",legend_fontsize=fontsize,legend_font_style="",legend_fontface="plain",
+                     legend_color="black",mat_legend_size=fontsize,display_number=F,seed=13, ...){
   
   #Make new page
   grid.newpage()
@@ -724,7 +739,7 @@ fheatmap <- function(data,header=T,scale=F,title=NA,title_fontsize=6,title_color
   #Set default Widths
   legend_row_width     = 0.01
   legend_col_width     = 0.01
-  mat_legend_width = padding_w*4 
+  mat_legend_width = padding_w*3 
   row_name_width   = max(unlist(length_npc(list_name=row_names, dim="width",font_size=row_fontsize))) +padding_w
   matrix_width     = (1-(legend_row_width+mat_legend_width+row_name_width))*0.98
   ann_row_width    = (1-(legend_row_width+mat_legend_width+row_name_width))*0.01
@@ -749,7 +764,7 @@ fheatmap <- function(data,header=T,scale=F,title=NA,title_fontsize=6,title_color
     
     for( i in 1:ncol(annotation_row)){ max_row_annot_str[i]<-as.character(annotation_row[,i][which.max(nchar(as.character(annotation_row[,i])))]) }
     ncols_rowannot   = ncol(annotation_row)
-    ann_row_width    = ncols_rowannot*(padding_w)
+    ann_row_width    = ncols_rowannot*(padding_w*1.5)
     legend_row_width= max(unlist(length_npc(list_name=max_row_annot_str,dim="width",font_size=legend_fontsize))) +padding_w*2.5  
   } 
   # Checking annotation_row colors
@@ -774,7 +789,7 @@ fheatmap <- function(data,header=T,scale=F,title=NA,title_fontsize=6,title_color
     
     for( i in 1:ncol(annotation_col)){ max_col_annot_str[i]<-as.character(annotation_col[,i][which.max(nchar(as.character(annotation_col[,i])))]) }
     ncols_colannot = ncol(annotation_col)
-    ann_col_height = ncols_colannot*(padding_h)
+    ann_col_height = ncols_colannot*(padding_h*1.5)
     legend_col_width= max(unlist(length_npc(list_name=max_col_annot_str,dim="width",font_size=legend_fontsize))) +padding_w*2.5
   }
   
@@ -834,14 +849,23 @@ fheatmap <- function(data,header=T,scale=F,title=NA,title_fontsize=6,title_color
   }
   
   #Make plot Grid
-  pushViewport(plotViewport(c(0.1,0.3,0.1,0.1),layout=grid.layout(5,6, widths=unit.c(unit(c(tree_row_width,ann_row_width,matrix_width,row_name_width,mat_legend_width,legend_width),"npc")),
-                                                                  heights= unit.c(unit(c(title_height,tree_col_height,ann_col_height,matrix_height,col_name_height),"npc"))  )))
+  pushViewport(plotViewport(c(0.1,1,0.1,0.1),layout=grid.layout(5,6, widths=unit.c(unit(c(tree_row_width,ann_row_width,matrix_width,row_name_width,mat_legend_width,legend_width),"npc")),
+                                                                heights= unit.c(unit(c(title_height,tree_col_height,ann_col_height,matrix_height,col_name_height),"npc"))  )))
+  
+  
+#   ##Draw grid for reference
+#   for( i in 1:5)
+#   {for (j in 1:6){
+#     pushViewport(vplayout(i,j))
+#     grid.rect()
+#     upViewport()
+#   }}
   
   #make Grid Dimensions
   grid_dim_list<-grid_dim_function(display_rownames=display_rownames,display_colnames=display_colnames,annotation_row=annotation_row,
                                    annotation_col=annotation_col,display_tree_col=display_tree_col,display_tree_row=display_tree_row)
   
-  #Draw Title
+  #   #Draw Title
   if( !is.na(title)){ 
     draw_title(title=title, font_size=title_fontsize,colour=title_color,family=title_font_style,fontface=title_fontface,dim=grid_dim_list)    
   }
@@ -854,8 +878,8 @@ fheatmap <- function(data,header=T,scale=F,title=NA,title_fontsize=6,title_color
   }
   #Draw tree for the cols
   if( display_tree_col ){
-      if(!is.na(tree_col[[1]][1])){ 
-        draw_tree(hc=tree_col,dim=grid_dim_list,rows=F,cut=cut_coltree)
+    if(!is.na(tree_col[[1]][1])){ 
+      draw_tree(hc=tree_col,dim=grid_dim_list,rows=F,cut=cut_coltree)
     }
   }
   
@@ -872,10 +896,11 @@ fheatmap <- function(data,header=T,scale=F,title=NA,title_fontsize=6,title_color
     #mat_color <- colorpanel(n=brk,low="green",mid="yellow",high="red")
     mat_color = colorRampPalette(rev(brewer.pal(n = 9, name = "RdYlGn")))(nrow(data)*ncol(data))
   }
-  mat_select_color <- draw_mat(data,dim=grid_dim_list,breaks=breaks,mat_color= mat_color,display_number=display_number)
+  mat_select_color <- draw_mat(data,dim=grid_dim_list,breaks=breaks,mat_color= mat_color,cell_border=cell_border,cell_border_col=cell_border_col,
+                               display_number=display_number)
   
   ## Draw matrix Legend
-  draw_mat_legend(data,mat_color,mat_legend_size=mat_legend_size,dim=grid_dim_list)
+  draw_mat_legend(data,mat_color,breaks=breaks,mat_legend_size=mat_legend_size,dim=grid_dim_list)
   
   #Draw names block
   if (display_colnames){

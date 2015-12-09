@@ -13,7 +13,7 @@
 }
 \examples{
 data(annotation_row)
-fheatmap(fheatmap_data,annotation_row=annotation_row,annot_row_color=annotation_row_color,
-          display_tree_col = FALSE,cluster_rows = TRUE,display_tree_row = TRUE)
+fheatmap(fheatmap_data,annotation_row=annotation_row,
+          annot_row_color=annotation_row_color)
 }
 \keyword{datasets}

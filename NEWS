@@ -1,0 +1,5 @@
+Version 1.0.1
+--------------------------------------------------------------
+Fixed improper colnames alignment
+Fixed improper alignment of mat legend
+Added option to add cell border ; Default is Grey
